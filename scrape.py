@@ -5,7 +5,7 @@ import re
 from ics import Calendar, Event
 from datetime import datetime, timedelta
 import io
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 import sys
 
 # Constants for scraping
@@ -22,7 +22,22 @@ def get_pdf_url(page_url):
         link = soup.find('a', string=PDF_LINK_TEXT_REGEX)
 
         if link and link.get('href'):
-            return urljoin(page_url, link['href'])
+            href = link['href']
+            full_url = urljoin(page_url, href)
+
+            # Security validation: Ensure scheme is http/https and domain matches page_url
+            parsed_url = urlparse(full_url)
+            parsed_page_url = urlparse(page_url)
+
+            if parsed_url.scheme not in ('http', 'https'):
+                print(f"Security Warning: Invalid URL scheme '{parsed_url.scheme}' in PDF link.")
+                return None
+
+            if parsed_url.netloc != parsed_page_url.netloc:
+                print(f"Security Warning: URL domain mismatch '{parsed_url.netloc}' in PDF link.")
+                return None
+
+            return full_url
         else:
             print("PDF link not found on the page.")
             return None
