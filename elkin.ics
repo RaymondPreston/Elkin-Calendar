@@ -2,31 +2,31 @@ BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:ics.py - http://git.io/lLljaA
 BEGIN:VEVENT
-DESCRIPTION:FEB 6 SCIENCE TO PRACTICE: TRANSLATING CPC
-DURATION:PT1H
-DTSTART:20260206T171500Z
-SUMMARY:Elkin Lecture Series
-UID:75799911-0541-4370-b0c1-27312e85ebec@7579.org
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:FEB 13
+DESCRIPTION:Presented by: MATTHEW DAVIDS\, MD\, MMSC Director\, Clinical Research\, Division of Lymphoma\, Dana-Farber Cancer Institute Associate Professor of Medicine\, Harvard Medical School\nHosted By: David Frank\, MD\, PhD\, FACP
 DURATION:PT1H
 DTSTART:20260213T171500Z
-SUMMARY:Elkin Lecture Series
-UID:8ffa4462-63c2-4aae-ac03-5ddafc387d17@8ffa.org
+SUMMARY:SURINDER K. PURI MEMORIAL LECTURE SERIES: TARGETING BCL-2 IN CHRONIC LYMPHOCYTIC LEUKEMIA - PAST\, PRESENT\, AND FUTURE
+UID:a312146f-7de5-45e6-a5bc-37db9d45f234@a312.org
 END:VEVENT
 BEGIN:VEVENT
-DESCRIPTION:FEB 27
-DURATION:PT1H
-DTSTART:20260227T171500Z
-SUMMARY:Elkin Lecture Series
-UID:1a8790d5-2cd4-49f2-b90b-55a84b4a0f01@1a87.org
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:FEB 20
+DESCRIPTION:Presented by: ROHIT BOSE\, MD\, PHD Director\, Clinical Research\, Division of Lymphoma\, Dana-Farber Cancer Institute Associate Professor of Medicine\, Harvard Medical School\nHosted By: Carlos Moreno\, PhD
 DURATION:PT1H
 DTSTART:20260220T171500Z
-SUMMARY:Elkin Lecture Series
-UID:586b871d-8c59-43ee-93ab-129c37122ac8@586b.org
+SUMMARY:STOCHASTICALLY EMERGENT TUMORS CAPTURE GENOMIC EVOLUTION FROM NON-MALIGNANT PRECURSORS ALL THE WAY TO DRUG RESISTANCE
+UID:2cdd3bf8-5897-4b7d-b699-d824e35e5b31@2cdd.org
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Presented by: ILANA GRAETZ\, PHD AND MYLIN TORRES\, MD
+DURATION:PT1H
+DTSTART:20260206T171500Z
+SUMMARY:CANCER PREVENTION AND CONTROL RETREAT - SCIENCE TO PRACTICE: TRANSLATING CPC RESEARCH INTO MEASURABLE IMPACT
+UID:ab5333f6-84b5-49b7-9a5d-505705fdcb17@ab53.org
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Presented by: SITA KUGEL\, PHD Associate Professor Human Biology Division\, Fred Hutch Cancer Center Emory University is committed to providing reasonable accommodations to qualified individuals with disabilities upon request. To request this document in an alternate format or to request a reasonable accommodation\, please contact the Department of Accessibility Services at 404-727-9877 (V) | 404-712-2049 (TDD). Please note that one week's advance notice is preferred.\nHosted By: Greg Lesinski\, PhD\, MPH
+DURATION:PT1H
+DTSTART:20260227T171500Z
+SUMMARY:TARGETING LINEAGE PLASTICITY IN PANCREATIC CANCER
+UID:c139b22a-1b03-4244-b347-077543d67b0e@c139.org
 END:VEVENT
 END:VCALENDAR
