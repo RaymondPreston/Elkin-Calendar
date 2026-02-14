@@ -14,7 +14,7 @@ from ics import Calendar, Event
 class TestScrape(unittest.TestCase):
 
     @patch('scrape.datetime')
-    def test_process_events_year_correction(self, mock_datetime):
+    def test_create_calendar_from_json_year_correction(self, mock_datetime):
         # Configure mock_datetime
         mock_datetime.strptime.side_effect = datetime.strptime
         mock_datetime.combine.side_effect = datetime.combine
@@ -30,7 +30,7 @@ class TestScrape(unittest.TestCase):
             {"date": "2024-10-20", "speaker": "Dr. Future", "status": "confirmed"}
         ]
 
-        calendar = scrape.process_events(events_data)
+        calendar = scrape.create_calendar_from_json(events_data)
         self.assertEqual(len(calendar.events), 1)
         event = list(calendar.events)[0]
         self.assertEqual(event.begin.year, 2025)
@@ -38,7 +38,7 @@ class TestScrape(unittest.TestCase):
         self.assertEqual(event.begin.day, 20)
 
     @patch('scrape.datetime')
-    def test_process_events_next_year_logic(self, mock_datetime):
+    def test_create_calendar_from_json_next_year_logic(self, mock_datetime):
         mock_datetime.strptime.side_effect = datetime.strptime
         mock_datetime.combine.side_effect = datetime.combine
 
@@ -52,14 +52,14 @@ class TestScrape(unittest.TestCase):
             {"date": "2024-01-05", "speaker": "Dr. Next", "status": "confirmed"}
         ]
 
-        calendar = scrape.process_events(events_data)
+        calendar = scrape.create_calendar_from_json(events_data)
         event = list(calendar.events)[0]
         self.assertEqual(event.begin.year, 2026)
         self.assertEqual(event.begin.month, 1)
         self.assertEqual(event.begin.day, 5)
 
     @patch('scrape.datetime')
-    def test_process_events_deduplication(self, mock_datetime):
+    def test_create_calendar_from_json_deduplication(self, mock_datetime):
         mock_datetime.strptime.side_effect = datetime.strptime
         mock_datetime.combine.side_effect = datetime.combine
         fixed_now = datetime(2025, 3, 1, tzinfo=timezone(timedelta(hours=-5)))
@@ -72,13 +72,13 @@ class TestScrape(unittest.TestCase):
             {"date": "2025-03-17", "speaker": "Speaker 2", "status": "confirmed"}
         ]
 
-        calendar = scrape.process_events(events_data)
+        calendar = scrape.create_calendar_from_json(events_data)
         self.assertEqual(len(calendar.events), 2)
         dates = sorted([e.begin.day for e in calendar.events])
         self.assertEqual(dates, [10, 17])
 
     @patch('scrape.datetime')
-    def test_process_events_cancelled(self, mock_datetime):
+    def test_create_calendar_from_json_cancelled(self, mock_datetime):
         mock_datetime.strptime.side_effect = datetime.strptime
         mock_datetime.combine.side_effect = datetime.combine
         fixed_now = datetime(2025, 3, 1, tzinfo=timezone(timedelta(hours=-5)))
@@ -86,17 +86,17 @@ class TestScrape(unittest.TestCase):
 
         # Cancelled event with reason in speaker field
         events_data = [
-            {"date": "2025-03-24", "speaker": "No Seminar: Holiday", "status": "cancelled"}
+            {"date": "2025-03-24", "speaker": "Holiday", "status": "cancelled", "reason": "Holiday"}
         ]
 
-        calendar = scrape.process_events(events_data)
+        calendar = scrape.create_calendar_from_json(events_data)
         event = list(calendar.events)[0]
         # Title should be the reason (speaker field)
-        self.assertEqual(event.name, "No Seminar: Holiday")
-        self.assertIn("Cancelled: No Seminar: Holiday", event.description)
+        self.assertEqual(event.name, "NO SEMINAR: Holiday")
+        self.assertIn("Cancelled: Holiday", event.description)
 
     @patch('scrape.datetime')
-    def test_process_events_special_event(self, mock_datetime):
+    def test_create_calendar_from_json_special_event(self, mock_datetime):
         mock_datetime.strptime.side_effect = datetime.strptime
         mock_datetime.combine.side_effect = datetime.combine
         fixed_now = datetime(2025, 3, 1, tzinfo=timezone(timedelta(hours=-5)))
@@ -107,7 +107,7 @@ class TestScrape(unittest.TestCase):
             {"date": "2025-03-31", "speaker": "Symposium", "status": "special_event"}
         ]
 
-        calendar = scrape.process_events(events_data)
+        calendar = scrape.create_calendar_from_json(events_data)
         event = list(calendar.events)[0]
         self.assertEqual(event.name, "SPECIAL EVENT: Symposium")
 
