@@ -1,4 +1,4 @@
 requests
 beautifulsoup4
-pdfplumber
 ics
+google-generativeai
