@@ -2,31 +2,31 @@ BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:ics.py - http://git.io/lLljaA
 BEGIN:VEVENT
-DESCRIPTION:Presented by: MATTHEW DAVIDS\, MD\, MMSC Director\, Clinical Research\, Division of Lymphoma\, Dana-Farber Cancer Institute Associate Professor of Medicine\, Harvard Medical School\nHosted By: David Frank\, MD\, PhD\, FACP
-DURATION:PT1H
-DTSTART:20260213T171500Z
-SUMMARY:SURINDER K. PURI MEMORIAL LECTURE SERIES: TARGETING BCL-2 IN CHRONIC LYMPHOCYTIC LEUKEMIA - PAST\, PRESENT\, AND FUTURE
-UID:8c3916ec-da9a-4677-9efb-8cb57bcb2f60@8c39.org
-END:VEVENT
-BEGIN:VEVENT
 DESCRIPTION:Presented by: SITA KUGEL\, PHD Associate Professor Human Biology Division\, Fred Hutch Cancer Center Emory University is committed to providing reasonable accommodations to qualified individuals with disabilities upon request. To request this document in an alternate format or to request a reasonable accommodation\, please contact the Department of Accessibility Services at 404-727-9877 (V) | 404-712-2049 (TDD). Please note that one week's advance notice is preferred.\nHosted By: Greg Lesinski\, PhD\, MPH
 DURATION:PT1H
 DTSTART:20260227T171500Z
 SUMMARY:TARGETING LINEAGE PLASTICITY IN PANCREATIC CANCER
-UID:09ad2da6-7e0c-4705-9a9c-99740da85b25@09ad.org
+UID:5d986ebd-1b8a-4113-a74a-411daf004bf4@5d98.org
 END:VEVENT
 BEGIN:VEVENT
-DESCRIPTION:Presented by: ROHIT BOSE\, MD\, PHD Director\, Clinical Research\, Division of Lymphoma\, Dana-Farber Cancer Institute Associate Professor of Medicine\, Harvard Medical School\nHosted By: Carlos Moreno\, PhD
+DESCRIPTION:Presented by: MATTHEW DAVIDS\, MD\, MMSC Director\, Clinical Research\, Division of Lymphoma\, Dana-Farber Cancer Institute Associate Professor of Medicine\, Harvard Medical School\nHosted By: David Frank\, MD\, PhD\, FACP
 DURATION:PT1H
-DTSTART:20260220T171500Z
-SUMMARY:STOCHASTICALLY EMERGENT TUMORS CAPTURE GENOMIC EVOLUTION FROM NON-MALIGNANT PRECURSORS ALL THE WAY TO DRUG RESISTANCE
-UID:6afbe8d2-204e-4234-acf7-0bac49518db7@6afb.org
+DTSTART:20260213T171500Z
+SUMMARY:SURINDER K. PURI MEMORIAL LECTURE SERIES: TARGETING BCL-2 IN CHRONIC LYMPHOCYTIC LEUKEMIA - PAST\, PRESENT\, AND FUTURE
+UID:b93f0910-c348-4789-a0c1-83437838a4b2@b93f.org
 END:VEVENT
 BEGIN:VEVENT
 DESCRIPTION:Presented by: ILANA GRAETZ\, PHD AND MYLIN TORRES\, MD
 DURATION:PT1H
 DTSTART:20260206T171500Z
 SUMMARY:CANCER PREVENTION AND CONTROL RETREAT - SCIENCE TO PRACTICE: TRANSLATING CPC RESEARCH INTO MEASURABLE IMPACT
-UID:718bc277-ba18-4ef3-9676-e529e984800c@718b.org
+UID:6849efb1-7b70-4977-aeec-eed0a5683877@6849.org
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Presented by: ROHIT BOSE\, MD\, PHD Director\, Clinical Research\, Division of Lymphoma\, Dana-Farber Cancer Institute Associate Professor of Medicine\, Harvard Medical School\nHosted By: Carlos Moreno\, PhD
+DURATION:PT1H
+DTSTART:20260220T171500Z
+SUMMARY:STOCHASTICALLY EMERGENT TUMORS CAPTURE GENOMIC EVOLUTION FROM NON-MALIGNANT PRECURSORS ALL THE WAY TO DRUG RESISTANCE
+UID:e6cbe385-3638-49b3-8e7b-6c3b61cf27a4@e6cb.org
 END:VEVENT
 END:VCALENDAR
