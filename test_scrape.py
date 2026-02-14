@@ -5,8 +5,9 @@ import os
 import sys
 from datetime import datetime, timezone, timedelta
 
-# Mock google.generativeai
-sys.modules["google.generativeai"] = MagicMock()
+# Mock google.genai and google.genai.types before importing scrape
+sys.modules["google.genai"] = MagicMock()
+sys.modules["google.genai.types"] = MagicMock()
 
 import scrape
 from ics import Calendar, Event
@@ -118,12 +119,18 @@ class TestScrape(unittest.TestCase):
         fixed_now = datetime(2025, 5, 1, tzinfo=timezone(timedelta(hours=-5)))
         mock_datetime.now.return_value = fixed_now
 
-        mock_model = MagicMock()
-        mock_genai.GenerativeModel.return_value = mock_model
+        mock_client = MagicMock()
+        mock_genai.Client.return_value = mock_client
 
+        # Mock file upload
+        mock_file_upload_response = MagicMock()
+        mock_file_upload_response.uri = "http://mock.uri"
+        mock_client.files.upload.return_value = mock_file_upload_response
+
+        # Mock generate_content
         mock_response = MagicMock()
         mock_response.text = '```json\n[{"date": "2025-04-01", "speaker": "Test", "status": "confirmed"}]\n```'
-        mock_model.generate_content.return_value = mock_response
+        mock_client.models.generate_content.return_value = mock_response
 
         os.environ["GEMINI_API_KEY"] = "fake_key"
 
@@ -131,10 +138,15 @@ class TestScrape(unittest.TestCase):
         self.assertEqual(len(events), 1)
         self.assertEqual(events[0]["speaker"], "Test")
 
-        # Verify prompt contains current year
-        args, kwargs = mock_model.generate_content.call_args
-        # The first argument is a list [sample_file, prompt]
-        prompt_text = args[0][1]
+        # Verify calls
+        mock_genai.Client.assert_called_with(api_key="fake_key")
+        mock_client.files.upload.assert_called_with(file="dummy.pdf")
+
+        # Verify prompt args
+        args, kwargs = mock_client.models.generate_content.call_args
+        self.assertEqual(kwargs['model'], "gemini-2.0-flash")
+
+        prompt_text = kwargs['contents'][1]
         self.assertIn("The current year is 2025", prompt_text)
         self.assertIn("The month is May", prompt_text)
 
@@ -142,6 +154,30 @@ class TestScrape(unittest.TestCase):
         with patch.dict(os.environ, {}, clear=True):
             with self.assertRaises(ValueError):
                 scrape.analyze_pdf_with_gemini("dummy.pdf")
+
+    @patch('scrape.datetime')
+    def test_create_calendar_from_json_none_values(self, mock_datetime):
+        mock_datetime.strptime.side_effect = datetime.strptime
+        mock_datetime.combine.side_effect = datetime.combine
+        fixed_now = datetime(2025, 3, 1, tzinfo=timezone(timedelta(hours=-5)))
+        mock_datetime.now.return_value = fixed_now
+
+        # Events with None values for string fields
+        events_data = [
+            {
+                "date": "2025-03-24",
+                "speaker": None,
+                "topic": None,
+                "host": None,
+                "status": "confirmed",
+                "reason": None
+            }
+        ]
+
+        # This should not raise AttributeError
+        calendar = scrape.create_calendar_from_json(events_data)
+        event = list(calendar.events)[0]
+        self.assertEqual(event.name, "Elkin: Unknown Speaker")
 
 if __name__ == '__main__':
     unittest.main()
