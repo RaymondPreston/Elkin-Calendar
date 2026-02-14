@@ -79,7 +79,7 @@ def analyze_pdf_with_gemini(pdf_path):
         print(f"File uploaded: {sample_file.uri}")
 
         # Using gemini-3.0-flash as requested
-        model = genai.GenerativeModel(model_name="gemini-3.0-flash")
+        model = genai.GenerativeModel(model_name="gemini-3-flash-preview")
 
         # Inject Context: Determine current_year and current_month
         now = datetime.now(TZ_NY)
