@@ -1,4 +1,4 @@
 requests
 beautifulsoup4
 ics
-google-generativeai
+google-genai

@@ -7,7 +7,8 @@ import os
 import sys
 import json
 import re
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from urllib.parse import urljoin, urlparse
 from zoneinfo import ZoneInfo
 
@@ -67,16 +68,13 @@ def analyze_pdf_with_gemini(pdf_path):
     if not api_key:
         raise ValueError("GEMINI_API_KEY environment variable not set.")
 
-    genai.configure(api_key=api_key)
+    client = genai.Client(api_key=api_key)
 
     try:
         print(f"Uploading {pdf_path} to Gemini...")
-        sample_file = genai.upload_file(path=pdf_path, display_name="Elkin Flyer")
+        sample_file = client.files.upload(file=pdf_path)
 
         print(f"File uploaded: {sample_file.uri}")
-
-        # Using gemini-3.0-flash as requested
-        model = genai.GenerativeModel(model_name="gemini-3-flash-preview")
 
         # Inject Context: Determine current_year and current_month
         now = datetime.now(TZ_NY)
@@ -110,9 +108,10 @@ def analyze_pdf_with_gemini(pdf_path):
         """
 
         print("Generating content...")
-        response = model.generate_content(
-            [sample_file, prompt],
-            generation_config={"response_mime_type": "application/json"}
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=[sample_file, prompt],
+            config=types.GenerateContentConfig(response_mime_type="application/json")
         )
 
         print("Response received.")
@@ -165,11 +164,11 @@ def create_calendar_from_json(events_data):
 
     for item in events_data:
         date_str = item.get("date")
-        speaker = item.get("speaker", "").strip()
-        topic = item.get("topic", "").strip()
-        host = item.get("host", "").strip()
-        status = item.get("status", "confirmed").lower()
-        reason = item.get("reason", "").strip()
+        speaker = (item.get("speaker") or "").strip()
+        topic = (item.get("topic") or "").strip()
+        host = (item.get("host") or "").strip()
+        status = (item.get("status") or "confirmed").lower()
+        reason = (item.get("reason") or "").strip()
 
         if not date_str:
             print(f"Skipping event with missing date: {item}")
