@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from ics import Calendar, Event
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, date
 import io
 import os
 import sys
@@ -78,17 +78,27 @@ def analyze_pdf_with_gemini(pdf_path):
 
         print(f"File uploaded: {sample_file.uri}")
 
-        # Using gemini-2.0-flash as requested (assuming 3.0 was a typo for the latest flash model)
-        model = genai.GenerativeModel(model_name="gemini-2.0-flash")
+        # Using gemini-3.0-flash as requested
+        model = genai.GenerativeModel(model_name="gemini-3.0-flash")
 
-        prompt = """
-        Extract all seminar dates, speaker names, and special statuses from this text.
+        # Inject Context: Determine current_year and current_month
+        now = datetime.now(TZ_NY)
+        current_year = now.year
+        current_month = now.strftime("%B")
+
+        prompt = f"""
+        Context: The current year is {current_year}. The month is {current_month}.
+
+        Task: Extract the schedule for the Elkin Lecture Series. Ignore 'Hosts', 'Committee Members', or 'Introduced by'. Only extract the main Speaker or Topic.
+
+        Constraint: There is usually only ONE event per date. If you see two names, determine who is the Speaker and who is the Host. Return only the Speaker.
+
+        Constraint: If the text says 'No Seminar', 'Holiday', or 'Special Event', mark the status as 'cancelled' and the title as the specific reason (e.g., 'No Seminar: Special Event').
+
         Return a pure JSON list of objects with keys:
         - date (YYYY-MM-DD)
-        - speaker (string, extract the full name and credentials if available)
+        - speaker (string, extract the full name and credentials if available. If cancelled, this field should contain the reason.)
         - status ('confirmed', 'cancelled', or 'special_event').
-
-        If the year is missing, assume the current year or the upcoming year based on the month.
         """
 
         print("Generating content...")
@@ -138,6 +148,13 @@ def process_events(events_data):
 
     print(f"Found {len(events_data)} events.")
 
+    # Determine current year for validation
+    now = datetime.now(TZ_NY)
+    current_year = now.year
+    current_month_num = now.month
+
+    seen_dates = set()
+
     for item in events_data:
         date_str = item.get("date")
         speaker = item.get("speaker", "Unknown Speaker")
@@ -148,19 +165,47 @@ def process_events(events_data):
             continue
 
         try:
-            event_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+            # Parse the date string from Gemini to get month and day, ignoring the year
+            temp_date = datetime.strptime(date_str, "%Y-%m-%d")
+            event_month = temp_date.month
+            event_day = temp_date.day
         except ValueError:
             print(f"Error parsing date: {date_str}")
             continue
+
+        # Year Validation Logic
+        # Construct the date object using the current year (or current_year + 1 if the month is January and we are scraping for next year).
+        # We assume scraping for next year happens if current month is late in the year (>= 10) and event is in Jan.
+        year = current_year
+        if event_month == 1 and current_month_num >= 10:
+             year = current_year + 1
+
+        try:
+             event_date = date(year, event_month, event_day)
+        except ValueError as e:
+             print(f"Error creating date with year {year}: {e}")
+             continue
+
+        # Deduplication Logic
+        if event_date in seen_dates:
+             print(f"Skipping duplicate event on {event_date}")
+             continue
+        seen_dates.add(event_date)
 
         title = speaker
         description = ""
 
         if status == "cancelled":
-            title = "NO SEMINAR"
+            # Constraint says title should be the specific reason. Assuming Gemini puts reason in 'speaker'.
+            title = speaker
             description = f"Cancelled: {speaker}"
         elif status == "special_event":
-            title = "SPECIAL EVENT"
+            # If status is special_event, it might be an actual event or a cancellation.
+            # Assuming it is an event unless it says "No Seminar".
+            # The prompt says: "If the text says ... 'Special Event', mark the status as 'cancelled'..."
+            # So if we see 'special_event' status here, it might be from older logic or Gemini deviated.
+            # We'll treat it as Special Event.
+            title = f"SPECIAL EVENT: {speaker}"
             description = f"Special Event: {speaker}"
         else:
             # Confirmed
