@@ -115,6 +115,45 @@ def clean_title(title_lines):
     full_title = re.sub(r'\s+', ' ', full_title)
     return full_title
 
+# Helper to check if a line is a separator/header
+def is_separator(line):
+    line_lower = line.lower()
+    if "hosted by:" in line_lower: return True
+    if "passcode:" in line_lower: return True
+    if "zoom" in line_lower: return True
+    if "meeting id" in line_lower: return True
+    if "elkin lectures are open" in line_lower: return True
+    if "friday afternoons" in line_lower: return True
+    if "presented by:" in line_lower: return True
+    # Time regex: e.g. 10:30 AM, 12:15 p.m.
+    if re.search(r'\d{1,2}:\d{2}\s*(?:AM|PM|a\.m\.|p\.m\.)', line, re.IGNORECASE): return True
+    return False
+
+def is_title_line(line):
+    # Heuristic: Title lines are usually All Caps.
+    # Or explicitly "Special Event" / "No Seminar"
+    if not line.strip(): return False
+    if is_separator(line): return False
+
+    # Check for special keywords
+    if "NO SEMINAR" in line.upper(): return True
+    if "SPECIAL EVENT" in line.upper(): return True
+    if "RETREAT" in line.upper(): return True # "CANCER PREVENTION AND CONTROL RETREAT"
+
+    # Default All Caps check
+    # Remove numbers and punctuation to check if letters are uppercase
+    letters = re.sub(r'[^a-zA-Z]', '', line)
+    if len(letters) > 0 and letters.isupper():
+        return True
+    elif len(letters) == 0:
+        # Lines like "FEB 6" with no letters (if cleaned) or just digits
+        # But line usually has letters.
+        # If line is just "123", assume True if context matches?
+        # Safe to say False if we rely on All Caps titles.
+        return True # e.g. "2026" or just symbols
+
+    return False
+
 def process_events(text):
     calendar = Calendar()
     lines = text.split('\n')
@@ -137,45 +176,6 @@ def process_events(text):
 
     print(f"Found {len(date_indices)} events.")
     date_indices.sort(key=lambda x: x[0])
-
-    # Helper to check if a line is a separator/header
-    def is_separator(line):
-        line_lower = line.lower()
-        if "hosted by:" in line_lower: return True
-        if "passcode:" in line_lower: return True
-        if "zoom" in line_lower: return True
-        if "meeting id" in line_lower: return True
-        if "elkin lectures are open" in line_lower: return True
-        if "friday afternoons" in line_lower: return True
-        if "presented by:" in line_lower: return True
-        # Time regex: e.g. 10:30 AM, 12:15 p.m.
-        if re.search(r'\d{1,2}:\d{2}\s*(?:AM|PM|a\.m\.|p\.m\.)', line, re.IGNORECASE): return True
-        return False
-
-    def is_title_line(line):
-        # Heuristic: Title lines are usually All Caps.
-        # Or explicitly "Special Event" / "No Seminar"
-        if not line.strip(): return False
-        if is_separator(line): return False
-
-        # Check for special keywords
-        if "NO SEMINAR" in line.upper(): return True
-        if "SPECIAL EVENT" in line.upper(): return True
-        if "RETREAT" in line.upper(): return True # "CANCER PREVENTION AND CONTROL RETREAT"
-
-        # Default All Caps check
-        # Remove numbers and punctuation to check if letters are uppercase
-        letters = re.sub(r'[^a-zA-Z]', '', line)
-        if len(letters) > 0 and letters.isupper():
-            return True
-        elif len(letters) == 0:
-            # Lines like "FEB 6" with no letters (if cleaned) or just digits
-            # But line usually has letters.
-            # If line is just "123", assume True if context matches?
-            # Safe to say False if we rely on All Caps titles.
-            return True # e.g. "2026" or just symbols
-
-        return False
 
     previous_end_idx = 0
 
