@@ -9,12 +9,9 @@ import json
 import re
 import google.generativeai as genai
 from urllib.parse import urljoin, urlparse
+from zoneinfo import ZoneInfo
 
-try:
-    from zoneinfo import ZoneInfo
-    TZ_NY = ZoneInfo("America/New_York")
-except Exception:
-    TZ_NY = timezone(timedelta(hours=-5))
+TZ_NY = ZoneInfo("America/New_York")
 
 # Constants for scraping
 PAGE_URL = "https://winshipcancer.emory.edu/education-and-training/continuing-education/elkin-lecture-series.php"
@@ -89,16 +86,27 @@ def analyze_pdf_with_gemini(pdf_path):
         prompt = f"""
         Context: The current year is {current_year}. The month is {current_month}.
 
-        Task: Extract the schedule for the Elkin Lecture Series. Ignore 'Hosts', 'Committee Members', or 'Introduced by'. Only extract the main Speaker or Topic.
+        Task: Extract the schedule for the Elkin Lecture Series.
 
-        Constraint: There is usually only ONE event per date. If you see two names, determine who is the Speaker and who is the Host. Return only the Speaker.
+        Details to extract:
+        - Date (YYYY-MM-DD)
+        - Speaker Name (if applicable)
+        - Topic (title of the talk)
+        - Host (person hosting)
+        - Status ('confirmed', 'cancelled', 'special_event')
+        - Reason (if cancelled or special event, e.g., 'Holiday', 'No Seminar')
 
-        Constraint: If the text says 'No Seminar', 'Holiday', or 'Special Event', mark the status as 'cancelled' and the title as the specific reason (e.g., 'No Seminar: Special Event').
+        Constraint: There is usually only ONE event per date. If you see two names, determine who is the Speaker and who is the Host.
+
+        Constraint: If the text says 'No Seminar', 'Holiday', or 'Special Event', mark the status as 'cancelled' (or 'special_event') and provide the 'reason'.
 
         Return a pure JSON list of objects with keys:
-        - date (YYYY-MM-DD)
-        - speaker (string, extract the full name and credentials if available. If cancelled, this field should contain the reason.)
-        - status ('confirmed', 'cancelled', or 'special_event').
+        - date
+        - speaker
+        - topic
+        - host
+        - status
+        - reason
         """
 
         print("Generating content...")
@@ -123,7 +131,7 @@ def analyze_pdf_with_gemini(pdf_path):
         print(f"Error calling Gemini API: {e}")
         raise e
 
-def process_events(events_data):
+def create_calendar_from_json(events_data):
     calendar = Calendar()
 
     # In case the JSON is a dict with a key like "events"
@@ -140,11 +148,11 @@ def process_events(events_data):
                     break
             if not found_list:
                 print("Error: content is not a list and no list found in dict")
-                return calendar
+                return
 
     if not isinstance(events_data, list):
         print("Error: content is not a list")
-        return calendar
+        return
 
     print(f"Found {len(events_data)} events.")
 
@@ -157,8 +165,11 @@ def process_events(events_data):
 
     for item in events_data:
         date_str = item.get("date")
-        speaker = item.get("speaker", "Unknown Speaker")
-        status = item.get("status", "confirmed")
+        speaker = item.get("speaker", "").strip()
+        topic = item.get("topic", "").strip()
+        host = item.get("host", "").strip()
+        status = item.get("status", "confirmed").lower()
+        reason = item.get("reason", "").strip()
 
         if not date_str:
             print(f"Skipping event with missing date: {item}")
@@ -174,8 +185,6 @@ def process_events(events_data):
             continue
 
         # Year Validation Logic
-        # Construct the date object using the current year (or current_year + 1 if the month is January and we are scraping for next year).
-        # We assume scraping for next year happens if current month is late in the year (>= 10) and event is in Jan.
         year = current_year
         if event_month == 1 and current_month_num >= 10:
              year = current_year + 1
@@ -192,40 +201,67 @@ def process_events(events_data):
              continue
         seen_dates.add(event_date)
 
-        title = speaker
-        description = ""
+        title = ""
+        description_lines = []
 
+        # Determine Title and Description based on status
         if status == "cancelled":
-            # Constraint says title should be the specific reason. Assuming Gemini puts reason in 'speaker'.
-            title = speaker
-            description = f"Cancelled: {speaker}"
+            # Priority: Reason -> Speaker -> "Cancelled"
+            cancellation_reason = reason if reason else speaker
+            if not cancellation_reason:
+                cancellation_reason = "Cancelled"
+
+            title = f"NO SEMINAR: {cancellation_reason}"
+            description_lines.append(f"Cancelled: {cancellation_reason}")
+
         elif status == "special_event":
-            # If status is special_event, it might be an actual event or a cancellation.
-            # Assuming it is an event unless it says "No Seminar".
-            # The prompt says: "If the text says ... 'Special Event', mark the status as 'cancelled'..."
-            # So if we see 'special_event' status here, it might be from older logic or Gemini deviated.
-            # We'll treat it as Special Event.
-            title = f"SPECIAL EVENT: {speaker}"
-            description = f"Special Event: {speaker}"
-        else:
-            # Confirmed
-            title = speaker
-            description = f"Presented by: {speaker}"
+            event_reason = reason if reason else speaker
+            title = f"SPECIAL EVENT: {event_reason}"
+            description_lines.append(f"Special Event: {event_reason}")
+            if topic:
+                description_lines.append(f"Topic: {topic}")
+            if host:
+                description_lines.append(f"Host: {host}")
+
+        else: # Confirmed or unknown
+            # Fallback for speaker name if empty
+            speaker_name = speaker if speaker else "Unknown Speaker"
+            title = f"Elkin: {speaker_name}"
+
+            if topic:
+                description_lines.append(f"Topic: {topic}")
+            if host:
+                description_lines.append(f"Host: {host}")
+
+            description_lines.append(f"Presented by: {speaker_name}")
+
+        description = "\n".join(description_lines)
 
         # Set time to 12:15 PM EST
-        # Combine date and time
         dt_start = datetime.combine(event_date, datetime.strptime("12:15 PM", "%I:%M %p").time())
         dt_start = dt_start.replace(tzinfo=TZ_NY)
+
+        # Generate Deterministic UID
+        # "elkin-{date_str}@winship.emory.edu"
+        # We use the CALCULATED date (YYYY-MM-DD)
+        uid_date_str = event_date.strftime("%Y-%m-%d")
+        uid = f"elkin-{uid_date_str}@winship.emory.edu"
 
         e = Event()
         e.name = title
         e.description = description
         e.begin = dt_start
         e.duration = timedelta(hours=1)
+        e.location = "John H. Kauffman Auditorium (C5012) / Zoom"
+        e.uid = uid
 
         calendar.events.add(e)
-        print(f"  -> Added Event: {title} on {event_date}")
+        print(f"  -> Added Event: {title} on {event_date} (UID: {uid})")
 
+    with open('elkin.ics', 'w') as f:
+        f.write(calendar.serialize())
+
+    print("elkin.ics created successfully.")
     return calendar
 
 def main():
@@ -255,12 +291,7 @@ def main():
         sys.exit(1)
 
     print("Generating calendar...")
-    calendar = process_events(events_data)
-
-    with open('elkin.ics', 'w') as f:
-        f.write(calendar.serialize())
-
-    print("elkin.ics created successfully.")
+    create_calendar_from_json(events_data)
 
 if __name__ == "__main__":
     main()
