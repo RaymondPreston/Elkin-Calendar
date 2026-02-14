@@ -3,10 +3,16 @@ from bs4 import BeautifulSoup
 import pdfplumber
 import re
 from ics import Calendar, Event
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import io
 from urllib.parse import urljoin, urlparse
 import sys
+
+try:
+    from zoneinfo import ZoneInfo
+    TZ_NY = ZoneInfo("America/New_York")
+except Exception:
+    TZ_NY = timezone(timedelta(hours=-5))
 
 # Constants for scraping
 PAGE_URL = "https://winshipcancer.emory.edu/education-and-training/continuing-education/elkin-lecture-series.php"
@@ -317,15 +323,8 @@ def process_events(text):
         e.name = title
         e.description = full_description
 
-        from zoneinfo import ZoneInfo
-        try:
-            tz = ZoneInfo("America/New_York")
-        except:
-            from datetime import timezone
-            tz = timezone(timedelta(hours=-5))
-
         dt_start = datetime.combine(event_date, datetime.strptime("12:15 PM", "%I:%M %p").time())
-        dt_start = dt_start.replace(tzinfo=tz)
+        dt_start = dt_start.replace(tzinfo=TZ_NY)
 
         e.begin = dt_start
         e.duration = timedelta(hours=1)
