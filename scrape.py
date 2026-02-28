@@ -131,7 +131,20 @@ def analyze_pdf_with_gemini(pdf_path):
         raise e
 
 def create_calendar_from_json(events_data):
-    calendar = Calendar()
+    # Load Existing: Check if elkin.ics exists
+    if os.path.exists("elkin.ics"):
+        try:
+            with open("elkin.ics", "r") as f:
+                calendar = Calendar(f.read())
+            print(f"Loaded existing calendar with {len(calendar.events)} events.")
+        except Exception as e:
+            print(f"Error reading existing calendar: {e}. Starting with a new calendar.")
+            calendar = Calendar()
+    else:
+        calendar = Calendar()
+
+    # Map by UID: Create a dictionary of existing events keyed by their UID
+    event_map = {e.uid: e for e in calendar.events}
 
     # In case the JSON is a dict with a key like "events"
     if isinstance(events_data, dict):
@@ -254,14 +267,23 @@ def create_calendar_from_json(events_data):
         e.location = "John H. Kauffman Auditorium (C5012) / Zoom"
         e.uid = uid
 
-        calendar.events.add(e)
-        print(f"  -> Added Event: {title} on {event_date} (UID: {uid})")
+        # Update the map: event_map[new_event.uid] = new_event
+        if uid in event_map:
+            print(f"  -> Updating Event: {title} on {event_date} (UID: {uid})")
+        else:
+            print(f"  -> Added Event: {title} on {event_date} (UID: {uid})")
+
+        event_map[uid] = e
+
+    # Save: Create a final Calendar using the values from event_map and save it to elkin.ics
+    final_calendar = Calendar()
+    final_calendar.events = set(event_map.values())
 
     with open('elkin.ics', 'w') as f:
-        f.write(calendar.serialize())
+        f.write(final_calendar.serialize())
 
     print("elkin.ics created successfully.")
-    return calendar
+    return final_calendar
 
 def main():
     print(f"Fetching page: {PAGE_URL}")

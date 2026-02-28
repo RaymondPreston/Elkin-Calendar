@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, mock_open
 import json
 import os
 import sys
@@ -15,7 +15,12 @@ from ics import Calendar, Event
 class TestScrape(unittest.TestCase):
 
     @patch('scrape.datetime')
-    def test_create_calendar_from_json_year_correction(self, mock_datetime):
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("os.path.exists")
+    def test_create_calendar_from_json_year_correction(self, mock_exists, mock_file, mock_datetime):
+        # Simulate no existing file
+        mock_exists.return_value = False
+
         # Configure mock_datetime
         mock_datetime.strptime.side_effect = datetime.strptime
         mock_datetime.combine.side_effect = datetime.combine
@@ -39,7 +44,11 @@ class TestScrape(unittest.TestCase):
         self.assertEqual(event.begin.day, 20)
 
     @patch('scrape.datetime')
-    def test_create_calendar_from_json_next_year_logic(self, mock_datetime):
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("os.path.exists")
+    def test_create_calendar_from_json_next_year_logic(self, mock_exists, mock_file, mock_datetime):
+        mock_exists.return_value = False
+
         mock_datetime.strptime.side_effect = datetime.strptime
         mock_datetime.combine.side_effect = datetime.combine
 
@@ -60,7 +69,11 @@ class TestScrape(unittest.TestCase):
         self.assertEqual(event.begin.day, 5)
 
     @patch('scrape.datetime')
-    def test_create_calendar_from_json_deduplication(self, mock_datetime):
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("os.path.exists")
+    def test_create_calendar_from_json_deduplication(self, mock_exists, mock_file, mock_datetime):
+        mock_exists.return_value = False
+
         mock_datetime.strptime.side_effect = datetime.strptime
         mock_datetime.combine.side_effect = datetime.combine
         fixed_now = datetime(2025, 3, 1, tzinfo=timezone(timedelta(hours=-5)))
@@ -79,7 +92,11 @@ class TestScrape(unittest.TestCase):
         self.assertEqual(dates, [10, 17])
 
     @patch('scrape.datetime')
-    def test_create_calendar_from_json_cancelled(self, mock_datetime):
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("os.path.exists")
+    def test_create_calendar_from_json_cancelled(self, mock_exists, mock_file, mock_datetime):
+        mock_exists.return_value = False
+
         mock_datetime.strptime.side_effect = datetime.strptime
         mock_datetime.combine.side_effect = datetime.combine
         fixed_now = datetime(2025, 3, 1, tzinfo=timezone(timedelta(hours=-5)))
@@ -97,7 +114,11 @@ class TestScrape(unittest.TestCase):
         self.assertIn("Cancelled: Holiday", event.description)
 
     @patch('scrape.datetime')
-    def test_create_calendar_from_json_special_event(self, mock_datetime):
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("os.path.exists")
+    def test_create_calendar_from_json_special_event(self, mock_exists, mock_file, mock_datetime):
+        mock_exists.return_value = False
+
         mock_datetime.strptime.side_effect = datetime.strptime
         mock_datetime.combine.side_effect = datetime.combine
         fixed_now = datetime(2025, 3, 1, tzinfo=timezone(timedelta(hours=-5)))
@@ -144,7 +165,7 @@ class TestScrape(unittest.TestCase):
 
         # Verify prompt args
         args, kwargs = mock_client.models.generate_content.call_args
-        self.assertEqual(kwargs['model'], "gemini-2.0-flash")
+        self.assertEqual(kwargs['model'], "gemini-3-flash-preview")
 
         prompt_text = kwargs['contents'][1]
         self.assertIn("The current year is 2025", prompt_text)
@@ -156,7 +177,11 @@ class TestScrape(unittest.TestCase):
                 scrape.analyze_pdf_with_gemini("dummy.pdf")
 
     @patch('scrape.datetime')
-    def test_create_calendar_from_json_none_values(self, mock_datetime):
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("os.path.exists")
+    def test_create_calendar_from_json_none_values(self, mock_exists, mock_file, mock_datetime):
+        mock_exists.return_value = False
+
         mock_datetime.strptime.side_effect = datetime.strptime
         mock_datetime.combine.side_effect = datetime.combine
         fixed_now = datetime(2025, 3, 1, tzinfo=timezone(timedelta(hours=-5)))
@@ -178,6 +203,58 @@ class TestScrape(unittest.TestCase):
         calendar = scrape.create_calendar_from_json(events_data)
         event = list(calendar.events)[0]
         self.assertEqual(event.name, "Elkin: Unknown Speaker")
+
+    @patch('scrape.datetime')
+    @patch("builtins.open", new_callable=mock_open, read_data="BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//My Calendar//MXM//EN\nBEGIN:VEVENT\nUID:old-uid\nSUMMARY:Old Event\nDTSTART:20250101T120000Z\nEND:VEVENT\nEND:VCALENDAR")
+    @patch("os.path.exists")
+    def test_merge_existing_events(self, mock_exists, mock_file, mock_datetime):
+        # Simulate existing file
+        mock_exists.return_value = True
+
+        mock_datetime.strptime.side_effect = datetime.strptime
+        mock_datetime.combine.side_effect = datetime.combine
+        fixed_now = datetime(2025, 1, 10, tzinfo=timezone(timedelta(hours=-5)))
+        mock_datetime.now.return_value = fixed_now
+
+        # New event data
+        events_data = [
+            {"date": "2025-02-01", "speaker": "New Speaker", "status": "confirmed"}
+        ]
+
+        calendar = scrape.create_calendar_from_json(events_data)
+
+        # Check that we have 2 events: one old, one new
+        self.assertEqual(len(calendar.events), 2)
+        uids = {e.uid for e in calendar.events}
+        self.assertIn("old-uid", uids)
+        # Calculate new UID
+        new_uid = "elkin-2025-02-01@winship.emory.edu"
+        self.assertIn(new_uid, uids)
+
+    @patch('scrape.datetime')
+    @patch("builtins.open", new_callable=mock_open, read_data="BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//My Calendar//MXM//EN\nBEGIN:VEVENT\nUID:elkin-2025-02-01@winship.emory.edu\nSUMMARY:Old Version\nDTSTART:20250201T171500Z\nEND:VEVENT\nEND:VCALENDAR")
+    @patch("os.path.exists")
+    def test_merge_update_existing_event(self, mock_exists, mock_file, mock_datetime):
+        # Simulate existing file with an event that will be updated
+        mock_exists.return_value = True
+
+        mock_datetime.strptime.side_effect = datetime.strptime
+        mock_datetime.combine.side_effect = datetime.combine
+        fixed_now = datetime(2025, 1, 10, tzinfo=timezone(timedelta(hours=-5)))
+        mock_datetime.now.return_value = fixed_now
+
+        # New event data (same date, different speaker)
+        events_data = [
+            {"date": "2025-02-01", "speaker": "Updated Speaker", "status": "confirmed"}
+        ]
+
+        calendar = scrape.create_calendar_from_json(events_data)
+
+        # Check that we still have 1 event, but updated
+        self.assertEqual(len(calendar.events), 1)
+        event = list(calendar.events)[0]
+        self.assertEqual(event.uid, "elkin-2025-02-01@winship.emory.edu")
+        self.assertEqual(event.name, "Elkin: Updated Speaker")
 
 if __name__ == '__main__':
     unittest.main()
