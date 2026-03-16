@@ -2,35 +2,35 @@ BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:ics.py - http://git.io/lLljaA
 BEGIN:VEVENT
-DESCRIPTION:Special Event: UGA - WINSHIP CANCER RESEARCH SUMMIT\nTopic: UGA - WINSHIP CANCER RESEARCH SUMMIT
+DESCRIPTION:Special Event: UGA - Winship Cancer Research Summit\nTopic: UGA - Winship Cancer Research Summit
 DURATION:PT1H
 LOCATION:John H. Kauffman Auditorium (C5012) / Zoom
 DTSTART:20260320T161500Z
-SUMMARY:SPECIAL EVENT: UGA - WINSHIP CANCER RESEARCH SUMMIT
+SUMMARY:SPECIAL EVENT: UGA - Winship Cancer Research Summit
 UID:elkin-2026-03-20@winship.emory.edu
 END:VEVENT
 BEGIN:VEVENT
-DESCRIPTION:Topic: CIRCADIAN ANTI-TUMOR IMMUNE RESPONSES\nHost: Zachary Buchwald\, MD\, PhD\nPresented by: CHRISTOPH SCHEIERMANN\, PHD
+DESCRIPTION:Topic: Circadian Anti-Tumor Immune Responses\nHost: Zachary Buchwald\, MD\, PhD\nPresented by: Christoph Scheiermann\, PhD
 DURATION:PT1H
 LOCATION:John H. Kauffman Auditorium (C5012) / Zoom
 DTSTART:20260327T161500Z
-SUMMARY:Elkin: CHRISTOPH SCHEIERMANN\, PHD
+SUMMARY:Elkin: Christoph Scheiermann\, PhD
 UID:elkin-2026-03-27@winship.emory.edu
 END:VEVENT
 BEGIN:VEVENT
-DESCRIPTION:Special Event: NO LECTURE\nTopic: POST-DOC RECRUITMENT EVENT
+DESCRIPTION:Special Event: No Lecture\nTopic: Post-Doc Recruitment Event
 DURATION:PT1H
 LOCATION:John H. Kauffman Auditorium (C5012) / Zoom
 DTSTART:20260313T161500Z
-SUMMARY:SPECIAL EVENT: NO LECTURE
+SUMMARY:SPECIAL EVENT: No Lecture
 UID:elkin-2026-03-13@winship.emory.edu
 END:VEVENT
 BEGIN:VEVENT
-DESCRIPTION:Topic: UNLOCKING PRECISION MEDICINE IN MYELOMA\nHost: Ben Barwick\, PhD\nPresented by: RYAN YOUNG\, PHD
+DESCRIPTION:Topic: Unlocking Precision Medicine in Myeloma\nHost: Ben Barwick\, PhD\nPresented by: Ryan Young\, PhD
 DURATION:PT1H
 LOCATION:John H. Kauffman Auditorium (C5012) / Zoom
 DTSTART:20260306T171500Z
-SUMMARY:Elkin: RYAN YOUNG\, PHD
+SUMMARY:Elkin: Ryan Young\, PhD
 UID:elkin-2026-03-06@winship.emory.edu
 END:VEVENT
 END:VCALENDAR
