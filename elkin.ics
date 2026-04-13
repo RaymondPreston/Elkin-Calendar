@@ -2,35 +2,27 @@ BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:ics.py - http://git.io/lLljaA
 BEGIN:VEVENT
-DESCRIPTION:Special Event: UGA - Winship Cancer Research Summit\nTopic: UGA - Winship Cancer Research Summit
+DESCRIPTION:Topic: Mechanisms of PARP Inhibitors in Targeted Cancer Therapy\nHost: Kyle Miller\, PhD\nPresented by: Eli Rothenberg\, PhD
 DURATION:PT1H
 LOCATION:John H. Kauffman Auditorium (C5012) / Zoom
-DTSTART:20260320T161500Z
-SUMMARY:SPECIAL EVENT: UGA - Winship Cancer Research Summit
-UID:elkin-2026-03-20@winship.emory.edu
+DTSTART:20260417T161500Z
+SUMMARY:Elkin: Eli Rothenberg\, PhD
+UID:elkin-2026-04-17@winship.emory.edu
 END:VEVENT
 BEGIN:VEVENT
-DESCRIPTION:Topic: Circadian Anti-Tumor Immune Responses\nHost: Zachary Buchwald\, MD\, PhD\nPresented by: Christoph Scheiermann\, PhD
+DESCRIPTION:Topic: Therapeutic mRNA Cancer Vaccines\nHost: Renee Read\, PhD\nPresented by: Elias Sayour\, MD\, PhD
 DURATION:PT1H
 LOCATION:John H. Kauffman Auditorium (C5012) / Zoom
-DTSTART:20260327T161500Z
-SUMMARY:Elkin: Christoph Scheiermann\, PhD
-UID:elkin-2026-03-27@winship.emory.edu
+DTSTART:20260424T161500Z
+SUMMARY:Elkin: Elias Sayour\, MD\, PhD
+UID:elkin-2026-04-24@winship.emory.edu
 END:VEVENT
 BEGIN:VEVENT
-DESCRIPTION:Special Event: Post-Doc Recruitment Event No Lecture\nTopic: Post-Doc Recruitment Event No Lecture
+DESCRIPTION:Topic: Demystifying the Covalent Ligandability of Dynamic and Disordered Macromolecules\nHost: Tyler Beyett\, PhD\nPresented by: Brittany Morgan\, PhD
 DURATION:PT1H
 LOCATION:John H. Kauffman Auditorium (C5012) / Zoom
-DTSTART:20260313T161500Z
-SUMMARY:SPECIAL EVENT: Post-Doc Recruitment Event No Lecture
-UID:elkin-2026-03-13@winship.emory.edu
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Topic: Unlocking Precision Medicine in Myeloma\nHost: Ben Barwick\, PhD\nPresented by: Ryan Young\, PhD
-DURATION:PT1H
-LOCATION:John H. Kauffman Auditorium (C5012) / Zoom
-DTSTART:20260306T171500Z
-SUMMARY:Elkin: Ryan Young\, PhD
-UID:elkin-2026-03-06@winship.emory.edu
+DTSTART:20260410T161500Z
+SUMMARY:Elkin: Brittany Morgan\, PhD
+UID:elkin-2026-04-10@winship.emory.edu
 END:VEVENT
 END:VCALENDAR
