@@ -2,27 +2,27 @@ BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:ics.py - http://git.io/lLljaA
 BEGIN:VEVENT
-DESCRIPTION:Topic: Mechanisms of PARP Inhibitors in Targeted Cancer Therapy\nHost: Kyle Miller\, PhD\nPresented by: Eli Rothenberg\, PhD
+DESCRIPTION:Topic: MECHANISMS OF PARP INHIBITORS IN TARGETED CANCER THERAPY\nHost: Kyle Miller\, PhD\nPresented by: ELI ROTHENBERG\, PHD
 DURATION:PT1H
 LOCATION:John H. Kauffman Auditorium (C5012) / Zoom
 DTSTART:20260417T161500Z
-SUMMARY:Elkin: Eli Rothenberg\, PhD
+SUMMARY:Elkin: ELI ROTHENBERG\, PHD
 UID:elkin-2026-04-17@winship.emory.edu
 END:VEVENT
 BEGIN:VEVENT
-DESCRIPTION:Topic: Therapeutic mRNA Cancer Vaccines\nHost: Renee Read\, PhD\nPresented by: Elias Sayour\, MD\, PhD
+DESCRIPTION:Topic: THERAPEUTIC MRNA CANCER VACCINES\nHost: Renee Read\, PhD\nPresented by: ELIAS SAYOUR\, MD\, PHD
 DURATION:PT1H
 LOCATION:John H. Kauffman Auditorium (C5012) / Zoom
 DTSTART:20260424T161500Z
-SUMMARY:Elkin: Elias Sayour\, MD\, PhD
+SUMMARY:Elkin: ELIAS SAYOUR\, MD\, PHD
 UID:elkin-2026-04-24@winship.emory.edu
 END:VEVENT
 BEGIN:VEVENT
-DESCRIPTION:Topic: Demystifying the Covalent Ligandability of Dynamic and Disordered Macromolecules\nHost: Tyler Beyett\, PhD\nPresented by: Brittany Morgan\, PhD
+DESCRIPTION:Topic: DEMYSTIFYING THE COVALENT LIGANDABILITY OF DYNAMIC AND DISORDERED MACROMOLECULES\nHost: Tyler Beyett\, PhD\nPresented by: BRITTANY MORGAN\, PHD
 DURATION:PT1H
 LOCATION:John H. Kauffman Auditorium (C5012) / Zoom
 DTSTART:20260410T161500Z
-SUMMARY:Elkin: Brittany Morgan\, PhD
+SUMMARY:Elkin: BRITTANY MORGAN\, PHD
 UID:elkin-2026-04-10@winship.emory.edu
 END:VEVENT
 END:VCALENDAR
