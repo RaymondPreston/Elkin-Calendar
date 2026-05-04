@@ -2,27 +2,43 @@ BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:ics.py - http://git.io/lLljaA
 BEGIN:VEVENT
-DESCRIPTION:Topic: Mechanisms of PARP Inhibitors in Targeted Cancer Therapy\nHost: Kyle Miller\, PhD\nPresented by: Eli Rothenberg\, PhD
+DESCRIPTION:Topic: Deciphering and Overcoming Mechanistic Barriers to Immune-Based Cancer Therapies\nHost: Biplab Dasgupta\, PhD\, MBA\nPresented by: Kivanc Birsoy\, PhD
 DURATION:PT1H
 LOCATION:John H. Kauffman Auditorium (C5012) / Zoom
-DTSTART:20260417T161500Z
-SUMMARY:Elkin: Eli Rothenberg\, PhD
-UID:elkin-2026-04-17@winship.emory.edu
+DTSTART:20260529T161500Z
+SUMMARY:Elkin: Kivanc Birsoy\, PhD
+UID:elkin-2026-05-29@winship.emory.edu
 END:VEVENT
 BEGIN:VEVENT
-DESCRIPTION:Topic: Therapeutic mRNA Cancer Vaccines\nHost: Renee Read\, PhD\nPresented by: Elias Sayour\, MD\, PhD
+DESCRIPTION:Topic: Therapeutic mRNA Deciphering and Overcoming Mechanistic Barriers to Immune-Based Cancer Therapiesancer Vaccines\nHost: Lisa Sudmeier\, MD\, PhD\nPresented by: Taha Merghoub\, PhD
 DURATION:PT1H
 LOCATION:John H. Kauffman Auditorium (C5012) / Zoom
-DTSTART:20260424T161500Z
-SUMMARY:Elkin: Elias Sayour\, MD\, PhD
-UID:elkin-2026-04-24@winship.emory.edu
+DTSTART:20260515T161500Z
+SUMMARY:Elkin: Taha Merghoub\, PhD
+UID:elkin-2026-05-15@winship.emory.edu
 END:VEVENT
 BEGIN:VEVENT
-DESCRIPTION:Topic: Demystifying the Covalent Ligandability of Dynamic and Disordered Macromolecules\nHost: Tyler Beyett\, PhD\nPresented by: Brittany Morgan\, PhD
+DESCRIPTION:Topic: Metabolic Plasticity in Acute Myeloid Leukemia\nHost: Biplab Dasgupta\, PhD\, MBA\nPresented by: Angelo D’Alessandro\, PhD
 DURATION:PT1H
 LOCATION:John H. Kauffman Auditorium (C5012) / Zoom
-DTSTART:20260410T161500Z
-SUMMARY:Elkin: Brittany Morgan\, PhD
-UID:elkin-2026-04-10@winship.emory.edu
+DTSTART:20260501T161500Z
+SUMMARY:Elkin: Angelo D’Alessandro\, PhD
+UID:elkin-2026-05-01@winship.emory.edu
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Cancelled: Memorial Day Weekend
+DURATION:PT1H
+LOCATION:John H. Kauffman Auditorium (C5012) / Zoom
+DTSTART:20260522T161500Z
+SUMMARY:NO SEMINAR: Memorial Day Weekend
+UID:elkin-2026-05-22@winship.emory.edu
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Topic: Leveraging Patient-Derived Organoids for Rare Cancer Research: From Basic Science to Clinical Applications\nHost: Renee Read\, PhD\nPresented by: Alice Soragni\, PhD
+DURATION:PT1H
+LOCATION:John H. Kauffman Auditorium (C5012) / Zoom
+DTSTART:20260508T161500Z
+SUMMARY:Elkin: Alice Soragni\, PhD
+UID:elkin-2026-05-08@winship.emory.edu
 END:VEVENT
 END:VCALENDAR
